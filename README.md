@@ -2,4 +2,4 @@
 
 ## Автор - Александр Арьков
 
-### Разработано при помощи React Native при помощи expo с использованием react-navigation, redux
+### Разработано на React Native при помощи expo с использованием react-navigation, redux
