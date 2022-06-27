@@ -10,7 +10,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 // redux
 import { useDispatch } from 'react-redux';
 import { setTimer } from './redux/actions/timer';
-import { updateData } from './redux/actions/data';
+import { setData } from './redux/actions/data';
 
 const Stack = createNativeStackNavigator();
 
@@ -29,7 +29,7 @@ export default function Navigate() {
               <TouchableOpacity
                 style={styles.btnBack}
                 onPress={() => {
-                  dispatch(updateData());
+                  dispatch(setData());
                   dispatch(setTimer(true));
                   navigation.navigate('MainPage');
                 }}

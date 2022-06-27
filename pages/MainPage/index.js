@@ -4,7 +4,7 @@ import { StatusBar } from 'expo-status-bar';
 import classNames from 'classnames';
 // redux
 import { useSelector, useDispatch } from 'react-redux';
-import { updateData } from '../../redux/actions/data';
+import { setData } from '../../redux/actions/data';
 import { setTimer } from '../../redux/actions/timer';
 
 export default function MainPage({ navigation }) {
@@ -17,14 +17,14 @@ export default function MainPage({ navigation }) {
 
   const dispatch = useDispatch();
   useEffect(() => {
-    dispatch(updateData());
+    dispatch(setData());
   }, []);
 
   const [timerNumber, setTimerNumber] = useState(60000);
   const [scroll, setScroll] = useState(false);
   useEffect(() => {
     const update = setInterval(() => {
-      if (timer === true && scroll === false) dispatch(updateData());
+      if (timer === true && scroll === false) dispatch(setData());
     }, timerNumber);
     return () => clearInterval(update);
   }, [timer, scroll]);
@@ -44,32 +44,37 @@ export default function MainPage({ navigation }) {
         disabled={secondsUpdate !== 0}
         style={secondsUpdate !== 0 ? styles.btnUpdateListButton : styles.btnUpdateListButtonActive}
         onPress={() => {
-          dispatch(updateData());
+          dispatch(setData());
           setTimerNumber(60000);
           setSecondsUpdate(15);
         }}
       >
         <Text style={styles.btnUpdateListText}>Обновить список</Text>
       </TouchableOpacity>
-      <FlatList
-        data={data.slice(0, 25)}
-        onScrollBeginDrag={() => setScroll(true)}
-        onScrollEndDrag={() => {
-          setScroll(false);
-          setTimerNumber(60000);
-        }}
-        renderItem={({ item }) => (
-          <TouchableOpacity
-            style={styles.itemList}
-            onPress={() => {
-              dispatch(setTimer(false));
-              navigation.navigate('ContentPage', { item });
-            }}
-          >
-            <Text style={styles.itemListText}>{item.actor.display_login}</Text>
-          </TouchableOpacity>
-        )}
-      ></FlatList>
+      {Array.isArray(data) ? (
+        <FlatList
+          data={data.slice(0, 25)}
+          onScrollBeginDrag={() => setScroll(true)}
+          onScrollEndDrag={() => {
+            setScroll(false);
+            setTimerNumber(60000);
+          }}
+          renderItem={({ item }) => (
+            <TouchableOpacity
+              style={styles.itemList}
+              onPress={() => {
+                dispatch(setTimer(false));
+                navigation.navigate('ContentPage', { item });
+              }}
+            >
+              <Text style={styles.itemListText}>{item.actor.display_login}</Text>
+            </TouchableOpacity>
+          )}
+        ></FlatList>
+      ) : (
+        <Text style={styles.notFound}>Ошибка загрузки данных</Text>
+      )}
+
       <StatusBar style='auto' />
     </View>
   );
@@ -103,6 +108,9 @@ const styles = StyleSheet.create({
   },
   btnUpdateListText: {
     color: 'white',
+    textAlign: 'center',
+  },
+  notFound: {
     textAlign: 'center',
   },
 });
